@@ -4,7 +4,12 @@
   "description": "Centrala pro rozvrzeni prace botu",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev:start": "tsc && node Build/index.js",
+    "start": "node Build/index.js",
+    "build": "tsc",
+    "dev:watch": "ts-node-dev --transpile-only --watch --respawn Source/index.ts"
+
   },
   "keywords": [],
   "author": "",
