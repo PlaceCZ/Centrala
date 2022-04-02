@@ -120,63 +120,11 @@ app.post("/updateorders", upload.single("image"), async (req, res) => {
 });
 
 
-wsServer.on('connection', socket => { 
-    logger.Log("Klient připojen", LogLevel.INFO);
-    
-    socket.on('close', () => { 
-        logger.Log("Klient odpojen", LogLevel.INFO);
-    })
-
-    socket.on('message', message => { 
-        let data;
-        try {
-            data = JSON.parse(message.toString());
-        } catch (error) {
-            logger.Log(`Nepodařilo se přečíst zprávu: ${message}, odpojuji klienta.`, LogLevel.WARN);
-            socket.close();
-            return;
-        }
-
-        if (!data.type) { 
-            logger.Log(`Nepodařilo se přečíst typ zprávy: ${message}, odpojuji klienta.`, LogLevel.WARN);
-            socket.close();
-            return;
-        }
-
-        switch (data.type) {
-            case "getmap":
-                socket.send(
-                    JSON.stringify({
-                        type: "map",
-                        data: currentMap,
-                        reason: mapHistory[mapHistory.length - 1].reason,
-                    })
-                );
-                break;
-            case "ping":
-                socket.send(JSON.stringify({ type: "pong", time: Date.now() }));
-                break;
-            case "placepixel":
-                const { x, y, color } = data;
-                if (
-                    x === undefined ||
-                    y === undefined ||
-                    (color === undefined && x < 0) ||
-                    x > 1999 ||
-                    y < 0 ||
-                    y > 1999 ||
-                    color < 0 ||
-                    color > 32
-                )
-                logger.Log(`Pixel placed: ${x}, ${y}: ${color}`, LogLevel.INFO);
-                break;
-            default:
-                socket.send(
-                    JSON.stringify({ type: "error", data: "Unknown command!" })
-                );
-                break;
-        }
-        
-    });
-}) 
-
+app.post("/token", (req, res) => { 
+    // Token bude v body asi, kdyz uz mame ten post request
+    if (req.body && req.body.token && req.body.session) {
+        const token = req.body.token;
+        const session = req.body.session;
+    }
+    res.status(200).send();
+})
