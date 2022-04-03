@@ -3,6 +3,7 @@ import * as jest from "jest"
 
 test("addToken", () => { 
     let tm = new TokenManager();
-    tm.addToken("test");
-    expect(tm.nextToken()?.value).toBe("test");
+    tm.addToken("testToken", "testSession");
+    expect(tm.nextToken()?.value).toBe("testToken");
+    expect(tm.nextToken()?.session).toBe("testSession");
 })

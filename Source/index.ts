@@ -1,19 +1,21 @@
-import Express, { Request, Response } from "express";
-import Logger, { LogLevel} from './Logger';
+import Express, { json, Request, Response } from "express";
+import Logger, { LogLevel } from "./Logger";
 import { Server } from "ws";
 import * as config from "./config.json";
-import * as fs from 'fs';
+import * as fs from "fs";
 import multer from "multer";
 import getPixels from "get-pixels";
 import { rgbToHex } from "./Helpers";
-import { config as dotenv, DotenvParseOutput } from "dotenv"
+import { config as dotenv, DotenvParseOutput } from "dotenv";
 import TokenManager from "./Tokman";
 
-const upload = multer({ dest: `${ __dirname}/uploads/` });
+const upload = multer({ dest: `${__dirname}/uploads/` });
 const app = Express();
 const logger = new Logger(config.logPath);
 
-const server = app.listen(config.port);
+const server = app.listen(config.port, () =>
+    logger.Log("Server běří na portu " + config.port, LogLevel.INFO)
+);
 const wsServer = new Server({ server, path: config.paths.websocket });
 const TokMan = new TokenManager();
 
@@ -24,17 +26,17 @@ type envType = {
 const env: envType = dotenv().parsed as envType;
 
 app.use(Express.static("Static"));
-app.use("/maps", Express.static("Maps", {extensions: ['png']}));
+app.use("/maps", Express.static("Maps", { extensions: ["png"] }));
 
-let currentMap = 'blank.png'
+let currentMap = "blank.png";
 const mapHistory = [
-    {file: 'blank.png', reason: 'Initial Map', date: Date.now()}
-]
+    { file: "blank.png", reason: "Initial Map", date: Date.now() },
+];
 
-app.use((_, res, next) => { 
+app.use((_, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
     next();
-})
+});
 
 app.get("/api/stats", (req, res) => {
     res.json({
@@ -121,16 +123,16 @@ app.post("/updateorders", upload.single("image"), async (req, res) => {
     });
 });
 
-
-app.post("/token", (req, res) => { 
+app.post("/token", json(), (req, res) => {
     // Token bude v body asi, kdyz uz mame ten post request
+    console.log(req.body);
     if (req.body && req.body.token && req.body.session) {
         const token = req.body.token;
         const session = req.body.session;
 
-        TokMan.addToken(token, session)
+        TokMan.addToken(token, session);
     }
     res.status(200).send();
-})
+});
 
 logger.Log("Centrála zapnuta", LogLevel.INFO);

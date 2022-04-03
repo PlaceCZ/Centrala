@@ -37,7 +37,7 @@ class TokenManager
     addToken(token: string, session: string){
         let tok = new Token(token, session);
         tokenMemory.push(tok);
-        log("Added new token: " + tok, LogLevel.INFO);
+        log("Added new token: " + tok.value, LogLevel.INFO);
     }
 
     nextToken(): Token | null {
@@ -51,7 +51,7 @@ class TokenManager
         if ((moment().unix() - tok.addedAt) > this._maxLifetimeSeconds || 
             tok.failedCount >= this._maxRetries) {
             // token is not pushed back to array - removed
-            log("Token removed: " + tok, LogLevel.INFO);
+            log("Token removed: " + tok.value, LogLevel.INFO);
             return this.nextToken();
         }
 
