@@ -128,3 +128,5 @@ app.post("/token", (req, res) => {
     }
     res.status(200).send();
 })
+
+logger.Log("Centrála zapnuta", LogLevel.INFO);

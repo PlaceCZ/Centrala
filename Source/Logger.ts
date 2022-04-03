@@ -1,4 +1,6 @@
 import * as fs from 'fs';
+import moment from "moment";
+
 
 enum LogLevel {
     DEBUG = 0,
@@ -8,24 +10,29 @@ enum LogLevel {
 }
 
 class Logger { 
-    private WriteStream: NodeJS.WritableStream;
+    public static Instance: Logger;
+
+    private WriteStream: fs.WriteStream;
     /**
      *
      */
     constructor(LoggingFile: string) {
         this.WriteStream = fs.createWriteStream(LoggingFile, { flags: 'a' });
+        Logger.Instance = this;
     }
 
     private LogToFile(message: string, level: LogLevel) { 
         const Level = EnumToString(level);
-        const ConsoleMessage = `[${Level}] [${new Date().toISOString()}] ${message}`;
-        this.WriteStream.write(ConsoleMessage + "\n");
+        const FileMessage = `[${Level}] [${moment().format("DD/HH:MM:SS")}] ${message}`;
+        this.WriteStream.write(FileMessage + "\n");
     } 
 
     public Log(message: string, level: LogLevel) { 
         this.LogToFile(message, level);
         const Level = EnumToString(level);
-        const ConsoleMessage = `[${Level}] [${new Date().toISOString()}] ${message}`;
+        const ConsoleMessage = `[${Level}] [${moment().format(
+            "DD/HH:MM:SS"
+        )}] ${message}`;
         process.stdout.write(ConsoleMessage + '\n');
     }
 }
