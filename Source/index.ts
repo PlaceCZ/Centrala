@@ -7,6 +7,7 @@ import multer from "multer";
 import getPixels from "get-pixels";
 import { rgbToHex } from "./Helpers";
 import { config as dotenv, DotenvParseOutput } from "dotenv"
+import TokenManager from "./Tokman";
 
 const upload = multer({ dest: `${ __dirname}/uploads/` });
 const app = Express();
@@ -14,6 +15,7 @@ const logger = new Logger(config.logPath);
 
 const server = app.listen(config.port);
 const wsServer = new Server({ server, path: config.paths.websocket });
+const TokMan = new TokenManager();
 
 type envType = {
     PASSWORD: string;
@@ -125,6 +127,8 @@ app.post("/token", (req, res) => {
     if (req.body && req.body.token && req.body.session) {
         const token = req.body.token;
         const session = req.body.session;
+
+        TokMan.addToken(token, session)
     }
     res.status(200).send();
 })

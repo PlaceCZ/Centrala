@@ -9,12 +9,14 @@ const log = Logger.Instance ? Logger.Instance.Log : (arg: string, level: LogLeve
 
 class Token {
     value: string | null = null;
+    session: string;
     addedAt: number;
 
     failedCount: number = 0;
 
-    constructor(value: string) {
+    constructor(value: string, session: string) {
         this.value = value;
+        this.session = session;
         this.addedAt = moment().unix();
     }
 }
@@ -32,8 +34,8 @@ class TokenManager
         this._maxLifetimeSeconds = maxTokenLifetimeSeconds;
     }
 
-    addToken(token: string){
-        let tok = new Token(token);
+    addToken(token: string, session: string){
+        let tok = new Token(token, session);
         tokenMemory.push(tok);
         log("Added new token: " + tok, LogLevel.INFO);
     }
