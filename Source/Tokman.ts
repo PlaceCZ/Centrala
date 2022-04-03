@@ -24,12 +24,12 @@ let tokenMemory: Token[] = [];
 
 class TokenManager
 {
-    private _max_retries: number;
-    private _max_lifetime_seconds: number;
+    private _maxRetries: number;
+    private _maxLifetimeSeconds: number;
 
-    constructor(max_token_retries: number = 3, max_token_lifetime_seconds: number = 3600*10 ) {
-        this._max_retries = max_token_retries;
-        this._max_lifetime_seconds = max_token_lifetime_seconds;
+    constructor(maxTokenRetries: number = 3, maxTokenLifetimeSeconds: number = 3600*10 ) {
+        this._maxRetries = maxTokenRetries;
+        this._maxLifetimeSeconds = maxTokenLifetimeSeconds;
     }
 
     addToken(token: string){
@@ -46,8 +46,8 @@ class TokenManager
             return null;
         }
 
-        if ((moment().unix() - tok.addedAt) > this._max_lifetime_seconds || 
-            tok.failedCount >= this._max_retries) {
+        if ((moment().unix() - tok.addedAt) > this._maxLifetimeSeconds || 
+            tok.failedCount >= this._maxRetries) {
             // token is not pushed back to array - removed
             log("Token removed: ", tok);
             return this.nextToken();
